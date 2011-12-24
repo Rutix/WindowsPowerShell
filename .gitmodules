@@ -1,0 +1,3 @@
+[submodule "Modules/posh-git"]
+	path = Modules/posh-git
+	url = git@github.com:Rutix/posh-git.git
