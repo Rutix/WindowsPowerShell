@@ -5,6 +5,9 @@ $desktop =  $(resolve-path "$Env:userprofile\desktop")
 
 Import-Module Pscx
 Import-Module Get-PSOwner
+Import-Module PsGet
+Import-Module PsUrl
 
-. (Resolve-Path ~/Documents/WindowsPowershell/ssh-agent-utils.ps1)
+# Load posh-git example profile
+. $(resolve-path "$modules\posh-git\rutix-profile.ps1")
 
