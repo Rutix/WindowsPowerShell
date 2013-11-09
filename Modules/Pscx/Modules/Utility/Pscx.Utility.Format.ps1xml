@@ -1,58 +1,118 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Types>
-  <Type>
-    <Name>System.Net.IPAddress</Name>
-    <Members>
-      <ScriptProperty>
-        <Name>SortableAddress</Name>
-        <GetScriptBlock>
-          $bytes=$this.GetAddressBytes()
-          [array]::Reverse($bytes)
-          $sum = 0
-          for ($i = 0; $i -lt $bytes.length; $i++) { $sum += ($bytes[$i] * [Math]::Pow(256,$i)) }
-          $sum
-        </GetScriptBlock>
-      </ScriptProperty>
-    </Members>
-  </Type>
-  <Type>
-    <Name>System.Net.NetworkInformation.PingReply</Name>
-    <Members>
-      <ScriptProperty>
-        <Name>BufferSize</Name>
-        <GetScriptBlock>
-          $this.Buffer.Length
-        </GetScriptBlock>
-      </ScriptProperty>
-      <ScriptProperty>
-        <Name>OptionsString</Name>
-        <GetScriptBlock>
-          'TTL={0}, DontFragment={1}' -f $this.Options.Ttl, $this.Options.DontFragment
-        </GetScriptBlock>
-      </ScriptProperty>
-      <MemberSet>
-        <Name>PSStandardMembers</Name>
-        <Members>
-          <PropertySet>
-            <Name>DefaultDisplayPropertySet</Name>
-            <ReferencedProperties>
-              <Name>Status</Name>
-              <Name>Address</Name>
-              <Name>RoundtripTime</Name>
-              <Name>BufferSize</Name>
-              <Name>OptionsString</Name>
-            </ReferencedProperties>
-          </PropertySet>
-        </Members>
-      </MemberSet>
-    </Members>
-  </Type>
-</Types>
+<Configuration>
+  <Controls>
+    <Control>
+      <Name>ParameterGroupingFormat</Name>
+      <CustomControl>
+        <CustomEntries>
+          <CustomEntry>
+            <CustomItem>
+              <Frame>
+                <LeftIndent>4</LeftIndent>
+                <CustomItem>
+                  <Text>Command: </Text>
+                  <ExpressionBinding>
+                    <ScriptBlock>"{0}/{1}" -f $(if($_.command.ModuleName){$_.command.ModuleName}else{$_.Command.CommandType.ToString()+":"}),$_.command.Name</ScriptBlock>
+                  </ExpressionBinding>
+                  <NewLine/>
+                  <Text>Set:    </Text>
+                  <ExpressionBinding>
+                    <ScriptBlock>"$(if($_.ParameterSet -eq "__AllParameterSets"){"Default"}else{$_.ParameterSet})" + "$(if($_.ParameterSet.IsDefault){" *"})"</ScriptBlock>
+                  </ExpressionBinding>
+                  <NewLine/>
+                </CustomItem>
+              </Frame>
+            </CustomItem>
+          </CustomEntry>
+        </CustomEntries>
+      </CustomControl>
+    </Control>
+  </Controls>
+  <ViewDefinitions>
+    <View>
+      <Name>ParameterMetadataEx</Name>
+      <ViewSelectedBy>
+        <TypeName>System.Management.Automation.ParameterMetadataEx</TypeName>
+      </ViewSelectedBy>
+      <GroupBy>
+        <PropertyName>ParameterSet</PropertyName>
+        <CustomControlName>ParameterGroupingFormat</CustomControlName>
+      </GroupBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Name</Label>
+            <Width>22</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Aliases</Label>
+            <Width>12</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Position</Label>
+            <Width>8</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Mandatory</Label>
+            <Width>9</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Pipeline</Label>
+            <Width>8</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>ByName</Label>
+            <Width>6</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Provider</Label>
+            <Width>15</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Type</Label>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Aliases</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <!--PropertyName>Position</PropertyName-->
+                <ScriptBlock>if($_.Position -lt 0){"Named"}else{$_.Position}</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Mandatory</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>ValueFromPipeline</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>ValueFromPipelineByPropertyName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <!--PropertyName>Provider</PropertyName-->
+                <ScriptBlock>if($_.Provider){$_.Provider}else{"All"}</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Type</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
 <!-- SIG # Begin signature block -->
 <!-- MIIfUwYJKoZIhvcNAQcCoIIfRDCCH0ACAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB -->
 <!-- gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR -->
-<!-- AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUmpmj/UeJ1snm/wP6tN/IDkK4 -->
-<!-- aVygghqFMIIGajCCBVKgAwIBAgIQA5/t7ct5W43tMgyJGfA2iTANBgkqhkiG9w0B -->
+<!-- AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUhR74drE6yyl/4wCZYVJ13HRe -->
+<!-- 56mgghqFMIIGajCCBVKgAwIBAgIQA5/t7ct5W43tMgyJGfA2iTANBgkqhkiG9w0B -->
 <!-- AQUFADBiMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYD -->
 <!-- VQQLExB3d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2VydCBBc3N1cmVk -->
 <!-- IElEIENBLTEwHhcNMTMwNTIxMDAwMDAwWhcNMTQwNjA0MDAwMDAwWjBHMQswCQYD -->
@@ -198,23 +258,23 @@
 <!-- Z2ljZXJ0LmNvbTEuMCwGA1UEAxMlRGlnaUNlcnQgQXNzdXJlZCBJRCBDb2RlIFNp -->
 <!-- Z25pbmcgQ0EtMQIQCt5a3rIU5HYOFJEEvbnHnDAJBgUrDgMCGgUAoHgwGAYKKwYB -->
 <!-- BAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAc -->
-<!-- BgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUWAZd -->
-<!-- iFnSFA2AqKNZ3IGI4owame4wDQYJKoZIhvcNAQEBBQAEggEACH4y4tqXz0YoazLZ -->
-<!-- jhpAmOD/LGfpkfwMPIXTu2prytNIYg6uNdlI13Tknp1Lap7+QUP6AkD4KiGYGjlV -->
-<!-- ZqHMzOTPmLPlHygBn4G48KWPakIWeSqn2R6N/2WjQKXnRq2zFmdq/+M1Sjgyr1PW -->
-<!-- oodUlQjg+Z9umrH98a5m3Rr3TaPcNga8sBqyrUPfYQv0w2g837RrRkeSSyoSwiyB -->
-<!-- 0YkgecSTmmlDmSKs8xxDkDX4NBxqaps0AbEsxQGQg4QVs+ir228JXuVPXEgOY7jo -->
-<!-- skAp3SZG6yzc93w/UXmUwpo6kvnsR377o/aC32HX8Wz6ISXNlm+CUJY4CJt+FG14 -->
-<!-- sUaWfKGCAg8wggILBgkqhkiG9w0BCQYxggH8MIIB+AIBATB2MGIxCzAJBgNVBAYT -->
+<!-- BgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUPi7q -->
+<!-- kDzrHMEsQN5KLywb+aH6DnQwDQYJKoZIhvcNAQEBBQAEggEAePmzkdKYKoYQUzVS -->
+<!-- iY82vLPpzsOJk1w3g0MfSyt7czIJVuSenfyDbvZjjZGBvo0odbZpPonYLpiHfmW/ -->
+<!-- KXl1qIhaGajLey6fDNZE/RwArzBPfHale7C5v01U+tazfN+NOo4gyP3uvix0ICcB -->
+<!-- iNe4APu7cjOhOwcMkjuVDm2r4NgNBr3bsrcz4FH/epdxoNt1xYJ5+SfFYZ4OL9E6 -->
+<!-- MwgwlC5k1FzRtk7lXR+Q+9i6vGXr7Z5HnABa+Z2jy4oqOXdw7pooMoJFya0WaoCL -->
+<!-- tZGBweXo54wCiUHF+W3WcwNboFBmnu6bJLfeXlFOStCXLR+we1u6ozJGIX9mK9bc -->
+<!-- OMHwiKGCAg8wggILBgkqhkiG9w0BCQYxggH8MIIB+AIBATB2MGIxCzAJBgNVBAYT -->
 <!-- AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2Vy -->
 <!-- dC5jb20xITAfBgNVBAMTGERpZ2lDZXJ0IEFzc3VyZWQgSUQgQ0EtMQIQA5/t7ct5 -->
 <!-- W43tMgyJGfA2iTAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEH -->
-<!-- ATAcBgkqhkiG9w0BCQUxDxcNMTMxMDE3MTQyNzM5WjAjBgkqhkiG9w0BCQQxFgQU -->
-<!-- Z3fS5NSu0dfVj4Hqbp2GGjVQNG4wDQYJKoZIhvcNAQEBBQAEggEAJjayBWY0e7f4 -->
-<!-- d9TxqtzvySe+ONoy2bIrpPR4mCjDM0JfMivyxcKroMjvB57kzdKtZl89Whxe4ivo -->
-<!-- AKIu5NzZ4G33Vvpqy7XEDAcGWu28XFnbHdduMoZQVGzbf6Mxt93LW3mCxVJRMzO5 -->
-<!-- CWsWo4/RhJqVJ2y6fNcaPDjp+ULerAAB05sSpqRewMexom4nvX1Y5udDoyTAAur/ -->
-<!-- sa4vVUBi3NZwgk4b7xHu9bhM0QB4G3Mqgnzh2jXHyxCwldvK/ZVNCvY/Om589ovf -->
-<!-- gdla0Xel1JNixHPcRmZEyZscJ1qRZrRV8Xuhvdz+PhrhUVyhiPo7KSFfO+TozgO9 -->
-<!-- vnKmFsCYCw== -->
+<!-- ATAcBgkqhkiG9w0BCQUxDxcNMTMxMDE3MTQyNzQwWjAjBgkqhkiG9w0BCQQxFgQU -->
+<!-- N1Zcds8Hz4QpTCVggDDYOSX8rNMwDQYJKoZIhvcNAQEBBQAEggEAqcNFB2JH/xF5 -->
+<!-- /R4Nbos/qeZco4YXdgGjgUVFmzMWY2cWkdfPR2JIUW35C9Be4yqLl9jZn8Fpx0v5 -->
+<!-- aUKjKlHWz+gnR4KVY51B31PxgncTNxXTWksPJ2zI5lKQXq6pGIp+qhW1z1tFg4Ws -->
+<!-- fhMV/paIjG551M9Gku9TOwZG1glOc6WhZ9VvwGxdUjfwtv/Rhf8D24k9LV5gF9sd -->
+<!-- LDrQR0Cs9DeKQaiun5J7+Nm+P71Q1+QIpX9FzZyde2rlUPQRob2gxfRXtP6Gu2W2 -->
+<!-- R6jyt1g6PPUmr1q5/NdSA0/+6QVDQIE+kF3hQ7RsfhRQzg5E5D617z0qqzPCUw0i -->
+<!-- VbX8jNuu7g== -->
 <!-- SIG # End signature block -->
